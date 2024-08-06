@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs')
 require('dotenv').config();
 const nodemailer = require('nodemailer')
 const crypto = require('crypto')
+const moment = require('moment-timezone');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -118,6 +119,42 @@ app.post('/forgot-password', async (req, res) => {
     }
 });
 
+
+// function formatDateInUTC(date, formatString = 'YYYY-MM-DDTHH:mm:ssZ') {
+//     return moment.utc(date).format(formatString); // Formats date as a string in UTC
+//   }
+
+function formatDateInUTC(date, timeZone = 'Europe/London', formatString = 'YYYY-MM-DDTHH:mm:ssZ') {
+    return moment.tz(date, timeZone).utc().format(formatString); // Parse with time zone and convert to UTC
+}
+
+function getCurrentTimeInUTC(timeZone, formatString = 'YYYY-MM-DDTHH:mm:ssZ') {
+    return moment.tz(moment(), timeZone).utc().format(formatString); // Get current time, convert to specified time zone, then to UTC
+}
+
+app.post('/current-time-utc', (req, res) => {
+    const { timeZone, formatString } = req.body; // Expecting timeZone and optional formatString from request
+
+    if (!timeZone) {
+        return res.status(400).json({ error: 'timeZone is a required field' });
+    }
+
+    try {
+        // Get current time in specified time zone and convert to UTC
+        const utcTime = getCurrentTimeInUTC(timeZone, formatString || 'YYYY-MM-DDTHH:mm:ssZ');
+        res.json({ utcTime });
+    } catch (error) {
+        res.status(500).json({ error: 'Error getting current time', details: error.message });
+    }
+});
+
+//   app.post('/format-utc', (req, res) => {
+//     const { date, formatString } = req.body; // Expecting date and format string from request
+    
+//     // Convert and format date
+//     const formattedDate = formatDateInUTC(date, formatString);
+//     res.json({ formattedDate });
+// });
 
 app.post('/reset-password/:token', async (req, res) => {
     const { token } = req.params;

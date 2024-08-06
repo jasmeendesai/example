@@ -7,10 +7,15 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+//import { Link } from 'react-router-dom';
 
 function App() {
   return (
     <>
+    {/* <p className="text-gray-700 text-sm">
+          Forgot password? <Link to="/login" className="text-blue-500 hover:underline">Forgot password</Link>
+        </p>
+    <p>hemo</p> */}
       <BrowserRouter>
         <Routes>
           <Route path='/signup' element={<Signup />} />
